@@ -185,12 +185,18 @@ def opc4(analyzer,valores):
         
         model.minimumCostPaths(analyzer,"75009-10")
         
+        numedges = totalConnections(analyzer)
+        numvertex = totalStops(analyzer)
 
         stop_time = getTime()
         tracemalloc.stop()
 
         delta_time = stop_time - start_time
-        print(str(valor)+".csv file:",round(delta_time/1000,3))
+
+        print(str(valor)+".csv file:")
+        print("Tiempo: ", round(delta_time,3))
+        print('Numero de vertices: ' + str(numvertex))
+        print('Numero de arcos: ' + str(numedges))
 
 def opc6(analyzer,valores):
     for valor in valores:
@@ -226,6 +232,6 @@ def opc6(analyzer,valores):
 
 
 
-"""analyzer = init()
+analyzer = init()
 valores =[50,150,300,1000,2000,3000,7000,10000,14000]
-opc6(analyzer,valores)"""
+opc4(analyzer,valores)
