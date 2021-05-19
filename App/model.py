@@ -196,7 +196,10 @@ def minimumCostPath(analyzer, destStation):
     y la estacion destino
     Se debe ejecutar primero la funcion minimumCostPaths
     """
+    print("paso model")
+
     path = djk.pathTo(analyzer['paths'], destStation)
+
     return path
 
 

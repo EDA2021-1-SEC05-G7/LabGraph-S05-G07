@@ -44,7 +44,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-servicefile = 'bus_routes_14000.csv'
+servicefile = 'bus_routes_50.csv'
 initialStation = None
 
 # ___________________________________________________
@@ -158,3 +158,4 @@ if __name__ == "__main__":
     sys.setrecursionlimit(2 ** 20)
     thread = threading.Thread(target=thread_cycle)
     thread.start()
+

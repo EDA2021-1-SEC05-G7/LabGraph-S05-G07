@@ -27,6 +27,8 @@
 import config as cf
 from App import model
 import csv
+import tracemalloc
+import time
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -69,6 +71,7 @@ def loadServices(analyzer, servicesfile):
     input_file = csv.DictReader(open(servicesfile, encoding="utf-8"),
                                 delimiter=",")
     lastservice = None
+    
     for service in input_file:
         if lastservice is not None:
             sameservice = lastservice['ServiceNo'] == service['ServiceNo']
@@ -134,3 +137,95 @@ def servedRoutes(analyzer):
     """
     maxvert, maxdeg = model.servedRoutes(analyzer)
     return maxvert, maxdeg
+
+#for time
+def getTime():
+    """
+    devuelve el instante tiempo de procesamiento en milisegundos
+    """
+    return float(time.perf_counter()*1000)
+
+
+def getMemory():
+    """
+    toma una muestra de la memoria alocada en instante de tiempo
+    """
+    return tracemalloc.take_snapshot()
+
+
+def deltaMemory(start_memory, stop_memory):
+    """
+    calcula la diferencia en memoria alocada del programa entre dos
+    instantes de tiempo y devuelve el resultado en bytes (ej.: 2100.0 B)
+    """
+    memory_diff = stop_memory.compare_to(start_memory, "filename")
+    delta_memory = 0.0
+
+    # suma de las diferencias en uso de memoria
+    for stat in memory_diff:
+        delta_memory = delta_memory + stat.size_diff
+    # de Byte -> kByte
+    delta_memory = delta_memory/1024.0
+    return delta_memory
+
+
+###pruebas lab10
+
+def opc4(analyzer,valores):
+    for valor in valores:
+
+        delta_time = -1.0
+
+        tracemalloc.start()
+        start_time = getTime()
+        
+        #req
+        narch = "bus_routes_"+str(valor)+".csv"
+        loadServices(analyzer,narch)
+        
+        model.minimumCostPaths(analyzer,"75009-10")
+        
+
+        stop_time = getTime()
+        tracemalloc.stop()
+
+        delta_time = stop_time - start_time
+        print(str(valor)+".csv file:",round(delta_time/1000,3))
+
+def opc6(analyzer,valores):
+    for valor in valores:
+
+        delta_time = -1.0
+
+        tracemalloc.start()
+        start_time = getTime()
+        
+        #req
+        narch = "bus_routes_"+str(valor)+".csv"
+        loadServices(analyzer,narch)
+        print(analyzer)
+        path = model.minimumCostPath(analyzer, "15151-10")
+        print("paso controller")
+        if path is not None:
+            pathlen = stack.size(path)
+            print('El camino es de longitud: ' + str(pathlen))
+            while (not stack.isEmpty(path)):
+                stop = stack.pop(path)
+                print(stop)
+        else:
+            print('No hay camino')
+
+
+        stop_time = getTime()
+        tracemalloc.stop()
+
+        delta_time = stop_time - start_time
+        print(" -- opc 6:\n --")
+        print(str(valor)+".csv file:",round(delta_time/1000,3))
+
+
+
+
+"""analyzer = init()
+valores =[50,150,300,1000,2000,3000,7000,10000,14000]
+opc6(analyzer,valores)"""
