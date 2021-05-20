@@ -29,6 +29,7 @@ from App import model
 import csv
 import tracemalloc
 import time
+from DISClib.ADT import stack
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -181,6 +182,7 @@ def opc4(analyzer,valores):
         
         #req
         narch = "bus_routes_"+str(valor)+".csv"
+
         loadServices(analyzer,narch)
         
         model.minimumCostPaths(analyzer,"75009-10")
@@ -208,10 +210,17 @@ def opc6(analyzer,valores):
         
         #req
         narch = "bus_routes_"+str(valor)+".csv"
+
         loadServices(analyzer,narch)
-        print(analyzer)
-        path = model.minimumCostPath(analyzer, "15151-10")
-        print("paso controller")
+
+        dest = "15151-10"
+
+        model.minimumCostPaths(analyzer,"75009-10")
+
+        #print(analyzer)
+        path = model.minimumCostPath(analyzer,dest)
+
+        #print("paso controller")
         if path is not None:
             pathlen = stack.size(path)
             print('El camino es de longitud: ' + str(pathlen))
@@ -221,17 +230,24 @@ def opc6(analyzer,valores):
         else:
             print('No hay camino')
 
+        numedges = totalConnections(analyzer)
+        numvertex = totalStops(analyzer)
+
 
         stop_time = getTime()
         tracemalloc.stop()
 
         delta_time = stop_time - start_time
-        print(" -- opc 6:\n --")
-        print(str(valor)+".csv file:",round(delta_time/1000,3))
+        print(" -- opc 6: -- ")
+        print(str(valor)+".csv file:")
+        print('El camino es de longitud: ' + str(pathlen))
+        print("Tiempo: ", round(delta_time,3))
+        print('Numero de vertices: ' + str(numvertex))
+        print('Numero de arcos: ' + str(numedges))
 
 
 
 
-analyzer = init()
+"""analyzer = init()
 valores =[50,150,300,1000,2000,3000,7000,10000,14000]
-opc4(analyzer,valores)
+opc6(analyzer,valores)"""
